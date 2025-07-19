@@ -13,7 +13,20 @@
 </head>
 <body>
 
-  <div class="control-card">
+  <!-- Модальное окно для ввода пароля -->
+  <div id="password-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h2>Вход</h2>
+      <p>Пожалуйста, введите пароль для доступа к управлению.</p>
+      <input type="password" id="password-input" placeholder="Пароль">
+      <button id="password-submit">Войти</button>
+      <p id="password-error" class="error-message"></p>
+    </div>
+  </div>
+
+  <!-- Основной интерфейс управления -->
+  <div id="control-panel" class="control-card hidden">
+    <button id="logout-button" class="logout-btn">Выйти</button>
     <h1>Управление Воротами</h1>
     <div class="buttons-container">
       <button class="btn btn-open" onclick="sendCommand('OPEN')">
