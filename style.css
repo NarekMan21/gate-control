@@ -28,6 +28,7 @@ body {
 }
 
 .control-card {
+  position: relative; /* Это исправит позиционирование дочерних кнопок */
   background: var(--card-color);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
