@@ -1,5 +1,6 @@
 const NPOINT_URL = 'https://api.npoint.io/5da080e5ab67708d4549';
 const CORRECT_PASSWORD = '2121';
+const LOG_PASSWORD = '21212121';
 
 // Элементы DOM
 const modal = document.getElementById('password-modal');
@@ -13,6 +14,17 @@ const closeButton = document.getElementById('close-button');
 const messageEl = document.getElementById('message');
 const loaderEl = document.querySelector('.loader');
 const buttons = document.querySelectorAll('.btn');
+
+// Элементы логов
+const logButton = document.getElementById('log-button');
+const logPasswordModal = document.getElementById('log-password-modal');
+const logPasswordInput = document.getElementById('log-password-input');
+const logPasswordSubmit = document.getElementById('log-password-submit');
+const logPasswordError = document.getElementById('log-password-error');
+const logViewModal = document.getElementById('log-view-modal');
+const logContainer = document.getElementById('log-container');
+const closeModalButtons = document.querySelectorAll('.close-modal-btn');
+
 
 // --- Логика аутентификации ---
 
@@ -57,37 +69,122 @@ function showControlPanel() {
 
 // --- Логика отправки команд ---
 
+// --- Логика отправки команд и логов ---
+
 openButton.addEventListener('click', () => sendCommand('OPEN'));
 closeButton.addEventListener('click', () => sendCommand('CLOSE'));
 
-function sendCommand(action) {
+async function sendCommand(action) {
     setLoading(true);
     const commandId = Date.now();
-    const commandPayload = { command: `${commandId}:${action}` };
+    const newLogEntry = {
+        id: commandId,
+        action: action,
+        timestamp: new Date().toISOString()
+    };
 
-    fetch(NPOINT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(commandPayload)
-    })
-    .then(response => {
-        if (response.ok) {
+    try {
+        // 1. Получаем текущие данные
+        const response = await fetch(NPOINT_URL);
+        if (!response.ok) throw new Error(`Ошибка при чтении данных (статус: ${response.status})`);
+        const data = await response.json();
+
+        // 2. Модифицируем данные
+        data.command = `${commandId}:${action}`;
+        if (!data.log) {
+            data.log = [];
+        }
+        data.log.unshift(newLogEntry); // Добавляем в начало
+        if (data.log.length > 50) { // Ограничиваем размер лога
+            data.log.pop();
+        }
+
+        // 3. Отправляем обновленные данные
+        const postResponse = await fetch(NPOINT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (postResponse.ok) {
             showMessage(`Команда "${action}" успешно отправлена!`);
         } else {
-            throw new Error(`Ошибка сервера (статус: ${response.status}).`);
+            throw new Error(`Ошибка при записи данных (статус: ${postResponse.status}).`);
         }
-    })
-    .catch(error => {
+
+    } catch (error) {
         console.error('Ошибка:', error);
         showMessage(error.message, true);
-    })
-    .finally(() => {
+    } finally {
         setTimeout(() => {
             setLoading(false);
             showMessage('');
         }, 2000);
-    });
+    }
 }
+
+// --- Логика отображения логов ---
+
+logButton.addEventListener('click', () => {
+    logPasswordModal.classList.remove('hidden');
+});
+
+logPasswordSubmit.addEventListener('click', handleLogLogin);
+logPasswordInput.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        handleLogLogin();
+    }
+});
+
+closeModalButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const modalToClose = document.getElementById(button.dataset.target);
+        modalToClose.classList.add('hidden');
+    });
+});
+
+function handleLogLogin() {
+    if (logPasswordInput.value === LOG_PASSWORD) {
+        logPasswordModal.classList.add('hidden');
+        logPasswordInput.value = '';
+        showLogs();
+    } else {
+        logPasswordError.textContent = 'Неверный пароль';
+        logPasswordInput.value = '';
+        setTimeout(() => logPasswordError.textContent = '', 2000);
+    }
+}
+
+async function showLogs() {
+    setLoading(true);
+    logViewModal.classList.remove('hidden');
+    logContainer.innerHTML = ''; // Очищаем
+
+    try {
+        const response = await fetch(NPOINT_URL);
+        if (!response.ok) throw new Error('Не удалось загрузить логи.');
+        const data = await response.json();
+
+        if (data.log && data.log.length > 0) {
+            data.log.forEach(entry => {
+                const logElement = document.createElement('p');
+                const date = new Date(entry.timestamp);
+                const formattedDate = `${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`;
+                logElement.innerHTML = `<b>${entry.action}</b> - ${formattedDate}`;
+                logContainer.appendChild(logElement);
+            });
+        } else {
+            logContainer.innerHTML = '<p>История пуста.</p>';
+        }
+
+    } catch (error) {
+        console.error('Ошибка:', error);
+        logContainer.innerHTML = `<p style="color: #ff4d4d;">${error.message}</p>`;
+    } finally {
+        setLoading(false);
+    }
+}
+
 
 function showMessage(text, isError = false) {
     messageEl.textContent = text;

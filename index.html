@@ -26,6 +26,7 @@
 
   <!-- Основной интерфейс управления -->
   <div id="control-panel" class="control-card hidden">
+    <button id="log-button" class="log-btn">Логи</button>
     <button id="logout-button" class="logout-btn">Выйти</button>
     <h1>Управление Воротами</h1>
     <div class="buttons-container">
@@ -41,6 +42,27 @@
     <div class="status-container">
         <div class="loader hidden"></div>
         <p id="message" class="message"></p>
+    </div>
+  </div>
+
+  <!-- Модальное окно для пароля логов -->
+  <div id="log-password-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2>Логи</h2>
+      <p>Введите пароль для доступа к истории.</p>
+      <input type="password" id="log-password-input" placeholder="Пароль">
+      <button id="log-password-submit">Войти</button>
+      <p id="log-password-error" class="error-message"></p>
+      <button class="close-modal-btn" data-target="log-password-modal">Закрыть</button>
+    </div>
+  </div>
+
+  <!-- Модальное окно для отображения логов -->
+  <div id="log-view-modal" class="modal-overlay hidden">
+    <div class="modal-content log-view-content">
+      <h2>История</h2>
+      <div id="log-container"></div>
+      <button class="close-modal-btn" data-target="log-view-modal">Закрыть</button>
     </div>
   </div>
 
