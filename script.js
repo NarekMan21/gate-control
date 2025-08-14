@@ -158,14 +158,16 @@ function handleLogLogin() {
 async function showLogs() {
     setLoading(true);
     logViewModal.classList.remove('hidden');
-    logContainer.innerHTML = ''; // Очищаем
+    logContainer.innerHTML = '';
 
     try {
         const response = await fetch(NPOINT_URL);
         if (!response.ok) throw new Error('Не удалось загрузить логи.');
         const data = await response.json();
 
+        // Если логи есть — показываем и сохраняем их в localStorage
         if (data.log && data.log.length > 0) {
+            localStorage.setItem('gateLogsBackup', JSON.stringify(data.log));
             data.log.forEach(entry => {
                 const logElement = document.createElement('p');
                 const date = new Date(entry.timestamp);
@@ -174,9 +176,23 @@ async function showLogs() {
                 logContainer.appendChild(logElement);
             });
         } else {
+            // Если логов нет — пробуем взять из localStorage
+            const backupLogs = localStorage.getItem('gateLogsBackup');
+            if (backupLogs) {
+                const logs = JSON.parse(backupLogs);
+                if (logs.length > 0) {
+                    logs.forEach(entry => {
+                        const logElement = document.createElement('p');
+                        const date = new Date(entry.timestamp);
+                        const formattedDate = `${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`;
+                        logElement.innerHTML = `<b>${entry.action}</b> - ${formattedDate}`;
+                        logContainer.appendChild(logElement);
+                    });
+                    return;
+                }
+            }
             logContainer.innerHTML = '<p>История пуста.</p>';
         }
-
     } catch (error) {
         console.error('Ошибка:', error);
         logContainer.innerHTML = `<p style="color: #ff4d4d;">${error.message}</p>`;
