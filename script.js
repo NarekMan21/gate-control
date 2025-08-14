@@ -162,7 +162,7 @@ async function showLogs() {
 
     try {
         const response = await fetch(NPOINT_URL);
-        if (!response.ok) throw new Error('Не удалось загрузить логи.');
+        if (!response.ok) throw new Error(`Не удалось загрузить логи. Код: ${response.status}`);
         const data = await response.json();
 
         // Если логи есть — показываем и сохраняем их в localStorage
@@ -188,6 +188,7 @@ async function showLogs() {
                         logElement.innerHTML = `<b>${entry.action}</b> - ${formattedDate}`;
                         logContainer.appendChild(logElement);
                     });
+                    logContainer.innerHTML += '<p style="color: #ffb400;">Показана резервная история. Облако временно недоступно.</p>';
                     return;
                 }
             }
@@ -195,7 +196,24 @@ async function showLogs() {
         }
     } catch (error) {
         console.error('Ошибка:', error);
-        logContainer.innerHTML = `<p style="color: #ff4d4d;">${error.message}</p>`;
+        // Если ошибка 502 или другая с сетью — показываем резервную историю
+        const backupLogs = localStorage.getItem('gateLogsBackup');
+        if (backupLogs) {
+            const logs = JSON.parse(backupLogs);
+            if (logs.length > 0) {
+                logs.forEach(entry => {
+                    const logElement = document.createElement('p');
+                    const date = new Date(entry.timestamp);
+                    const formattedDate = `${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`;
+                    logElement.innerHTML = `<b>${entry.action}</b> - ${formattedDate}`;
+                    logContainer.appendChild(logElement);
+                });
+                logContainer.innerHTML += '<p style="color: #ffb400;">Показана резервная история. Облако временно недоступно.</p>';
+                setLoading(false);
+                return;
+            }
+        }
+        logContainer.innerHTML = `<p style="color: #ff4d4d;">${error.message}<br>Облако временно недоступно. Попробуйте позже.</p>`;
     } finally {
         setLoading(false);
     }
