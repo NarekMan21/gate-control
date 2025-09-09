@@ -385,6 +385,11 @@ h1 {
   .weather-panel {
     padding: 15px;
     margin-top: 20px;
+    /* Более контрастный фон для лучшей читаемости на мобильных */
+    background: rgba(77, 255, 145, 0.15) !important;
+    border: 1px solid rgba(77, 255, 145, 0.4) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
   }
 
   .weather-title {
@@ -414,9 +419,13 @@ h1 {
   .control-card {
     padding: 20px;
   }
-
   .weather-panel {
     padding: 12px;
+    /* Контрастный фон для очень маленьких экранов */
+    background: rgba(77, 255, 145, 0.15) !important;
+    border: 1px solid rgba(77, 255, 145, 0.4) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
   }
 
   .weather-title {
@@ -467,10 +476,20 @@ h1 {
     font-size: 1.5rem;
     margin-bottom: 20px;
   }
-  
-  .weather-panel {
+    .weather-panel {
     margin: 15px 0;
     padding: 15px;
+  }
+
+  /* Контрастный фон для планшетов (768px) */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .weather-panel {
+      /* Контрастный фон для планшетов */
+      background: rgba(77, 255, 145, 0.15) !important;
+      border: 1px solid rgba(77, 255, 145, 0.4) !important;
+      backdrop-filter: blur(15px) !important;
+      -webkit-backdrop-filter: blur(15px) !important;
+    }
   }
   
   .weather-grid {
@@ -511,6 +530,16 @@ h1 {
     margin: 10px 0;
     padding: 10px;
     border-radius: 10px;
+  }
+
+  @media (max-width: 480px) {
+    .weather-panel {
+      /* Контрастный фон для мобильных телефонов */
+      background: rgba(77, 255, 145, 0.15) !important;
+      border: 1px solid rgba(77, 255, 145, 0.4) !important;
+      backdrop-filter: blur(15px) !important;
+      -webkit-backdrop-filter: blur(15px) !important;
+    }
   }
   
   .weather-title {
@@ -592,9 +621,16 @@ h1 {
     margin-bottom: 10px;
   }
   
-  .weather-panel {
-    padding: 8px;
-    margin: 8px 0;
+  @media (max-width: 320px) {
+    .weather-panel {
+      padding: 8px;
+      margin: 8px 0;
+      /* Контрастный фон для очень маленьких экранов */
+      background: rgba(77, 255, 145, 0.15) !important;
+      border: 1px solid rgba(77, 255, 145, 0.4) !important;
+      backdrop-filter: blur(15px) !important;
+      -webkit-backdrop-filter: blur(15px) !important;
+    }
   }
   
   .weather-item {
