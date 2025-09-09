@@ -527,6 +527,9 @@ h1 {
     padding: 8px;
     font-size: 0.8rem;
     border-radius: 8px;
+    /* Такой же контрастный фон как на десктопе */
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
   }
   
   .weather-value {
@@ -597,6 +600,9 @@ h1 {
   .weather-item {
     padding: 6px;
     font-size: 0.75rem;
+    /* Контрастный фон и для маленьких экранов */
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
   }
   
   .weather-value {
