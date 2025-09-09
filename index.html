@@ -43,6 +43,40 @@
         <div class="loader hidden"></div>
         <p id="message" class="message"></p>
     </div>
+
+    <!-- Погодная панель -->
+    <div id="weather-panel" class="weather-panel">
+      <div class="weather-title">
+        <svg class="weather-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        Метеостанция
+      </div>
+      <div class="weather-grid">
+        <div class="weather-item">
+          <div class="weather-label">Температура</div>
+          <div id="temperature" class="weather-value">--°C</div>
+        </div>
+        <div class="weather-item">
+          <div class="weather-label">Влажность</div>
+          <div id="humidity" class="weather-value">--%</div>
+        </div>
+        <div class="weather-item">
+          <div class="weather-label">Ветер</div>
+          <div id="wind-speed" class="weather-value">-- км/ч</div>
+        </div>
+        <div class="weather-item">
+          <div class="weather-label">Направление</div>
+          <div id="wind-direction" class="weather-value">--</div>
+        </div>
+      </div>
+      <div class="weather-item" style="margin-top: 10px;">
+        <div class="weather-label">Осадки</div>
+        <div id="rain" class="weather-value">-- мм</div>
+      </div>
+      <div id="last-update" class="weather-update">Обновлено: --</div>
+    </div>
   </div>
 
   <!-- Модальное окно для пароля логов -->

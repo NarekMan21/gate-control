@@ -6,6 +6,7 @@
   --text-color: #e0e0e0;
   --primary-glow: #00aaff;
   --secondary-glow: #ff00ff;
+  --weather-accent: #4dff91;
 }
 
 * {
@@ -39,7 +40,7 @@ body {
   text-align: center;
   animation: fadeIn 1s ease-out;
   width: 90%;
-  max-width: 400px;
+  max-width: 500px; /* Увеличиваем максимальную ширину для размещения погодной панели */
 }
 
 h1 {
@@ -130,6 +131,84 @@ h1 {
   border-radius: 50%;
   display: inline-block;
   animation: rotation 1s linear infinite;
+}
+
+/* --- Стили для погодной панели --- */
+.weather-panel {
+  background: rgba(77, 255, 145, 0.1);
+  border: 1px solid rgba(77, 255, 145, 0.3);
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 25px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeIn 1s ease-out 0.5s both;
+}
+
+.weather-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--weather-accent);
+  margin-bottom: 15px;
+  text-shadow: 0 0 8px rgba(77, 255, 145, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.weather-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.weather-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(77, 255, 145, 0.2);
+}
+
+.weather-label {
+  font-size: 0.8rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.weather-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--weather-accent);
+  text-shadow: 0 0 5px rgba(77, 255, 145, 0.3);
+}
+
+.weather-update {
+  font-size: 0.75rem;
+  color: var(--text-color);
+  opacity: 0.6;
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.weather-icon {
+  width: 16px;
+  height: 16px;
+  fill: var(--weather-accent);
+  filter: drop-shadow(0 0 3px rgba(77, 255, 145, 0.5));
 }
 
 /* --- Стили для модального окна пароля --- */
@@ -282,7 +361,8 @@ h1 {
 /* --- Адаптация для мобильных устройств --- */
 @media (max-width: 480px) {
   .control-card {
-    padding: 30px;
+    padding: 25px;
+    max-width: 95%;
   }
 
   h1 {
@@ -298,8 +378,52 @@ h1 {
     width: 100%; /* Кнопки на всю ширину */
     height: 60px;
   }
+
+  .weather-panel {
+    padding: 15px;
+    margin-top: 20px;
+  }
+
+  .weather-title {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .weather-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .weather-item {
+    padding: 10px;
+  }
+
+  .weather-value {
+    font-size: 1rem;
+  }
+
+  .weather-label {
+    font-size: 0.75rem;
+  }
 }
 
+@media (max-width: 360px) {
+  .control-card {
+    padding: 20px;
+  }
+
+  .weather-panel {
+    padding: 12px;
+  }
+
+  .weather-title {
+    font-size: 0.9rem;
+  }
+
+  .weather-value {
+    font-size: 0.9rem;
+  }
+}
 
 @keyframes rotation {
   0% {

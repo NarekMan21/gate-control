@@ -25,6 +25,14 @@ const logViewModal = document.getElementById('log-view-modal');
 const logContainer = document.getElementById('log-container');
 const closeModalButtons = document.querySelectorAll('.close-modal-btn');
 
+// Элементы погоды
+const weatherPanel = document.getElementById('weather-panel');
+const temperatureEl = document.getElementById('temperature');
+const humidityEl = document.getElementById('humidity');
+const windSpeedEl = document.getElementById('wind-speed');
+const windDirectionEl = document.getElementById('wind-direction');
+const rainEl = document.getElementById('rain');
+const lastUpdateEl = document.getElementById('last-update');
 
 // --- Логика аутентификации ---
 
@@ -60,11 +68,18 @@ function handleLogin() {
 function showPasswordModal() {
     modal.classList.remove('hidden');
     controlPanel.classList.add('hidden');
+    // Останавливаем обновление погоды при выходе
+    if (window.weatherUpdateInterval) {
+        clearInterval(window.weatherUpdateInterval);
+    }
 }
 
 function showControlPanel() {
     modal.classList.add('hidden');
     controlPanel.classList.remove('hidden');
+    // Запускаем обновление погоды при входе
+    loadWeatherData();
+    startWeatherUpdates();
 }
 
 // --- Логика отправки команд ---
@@ -219,6 +234,98 @@ async function showLogs() {
     }
 }
 
+// --- Логика отображения погодных данных ---
+
+async function loadWeatherData() {
+    try {
+        const response = await fetch(NPOINT_URL);
+        if (!response.ok) throw new Error(`Ошибка загрузки данных: ${response.status}`);
+        const data = await response.json();
+        
+        if (data.weather) {
+            updateWeatherDisplay(data.weather);
+            // Сохраняем данные в localStorage как резерв
+            localStorage.setItem('weatherBackup', JSON.stringify(data.weather));
+        } else {
+            // Пробуем загрузить резервные данные
+            const backupWeather = localStorage.getItem('weatherBackup');
+            if (backupWeather) {
+                const weather = JSON.parse(backupWeather);
+                updateWeatherDisplay(weather);
+                showWeatherError('Показаны резервные данные');
+            } else {
+                showWeatherError('Данные метеостанции недоступны');
+            }
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки погоды:', error);
+        // Пробуем показать резервные данные
+        const backupWeather = localStorage.getItem('weatherBackup');
+        if (backupWeather) {
+            const weather = JSON.parse(backupWeather);
+            updateWeatherDisplay(weather);
+            showWeatherError('Показаны резервные данные');
+        } else {
+            showWeatherError('Ошибка подключения к метеостанции');
+        }
+    }
+}
+
+function updateWeatherDisplay(weather) {
+    if (temperatureEl) temperatureEl.textContent = `${weather.temperature || 'N/A'}°C`;
+    if (humidityEl) humidityEl.textContent = `${weather.humidity || 'N/A'}%`;
+    if (windSpeedEl) windSpeedEl.textContent = `${weather.windSpeed || 'N/A'} км/ч`;
+    if (windDirectionEl) windDirectionEl.textContent = getWindDirectionText(weather.windDirection || 'N/A');
+    if (rainEl) rainEl.textContent = `${weather.rain || 'N/A'} мм`;
+    
+    if (lastUpdateEl) {
+        const updateTime = weather.lastUpdate ? 
+            new Date(weather.lastUpdate).toLocaleTimeString('ru-RU') : 
+            'Неизвестно';
+        lastUpdateEl.textContent = `Обновлено: ${updateTime}`;
+    }
+    
+    // Убираем сообщение об ошибке если данные успешно загружены
+    const errorEl = document.getElementById('weather-error');
+    if (errorEl) {
+        errorEl.style.display = 'none';
+    }
+}
+
+function getWindDirectionText(direction) {
+    const directions = {
+        'N': 'Север',
+        'NE': 'Северо-восток',
+        'E': 'Восток',
+        'SE': 'Юго-восток',
+        'S': 'Юг',
+        'SW': 'Юго-запад',
+        'W': 'Запад',
+        'NW': 'Северо-запад'
+    };
+    return directions[direction] || direction;
+}
+
+function showWeatherError(message) {
+    let errorEl = document.getElementById('weather-error');
+    if (!errorEl) {
+        errorEl = document.createElement('div');
+        errorEl.id = 'weather-error';
+        errorEl.style.cssText = 'color: #ffb400; font-size: 12px; text-align: center; margin-top: 10px;';
+        if (weatherPanel) {
+            weatherPanel.appendChild(errorEl);
+        }
+    }
+    errorEl.textContent = message;
+    errorEl.style.display = 'block';
+}
+
+function startWeatherUpdates() {
+    // Обновляем погоду каждые 30 секунд
+    window.weatherUpdateInterval = setInterval(loadWeatherData, 30000);
+}
+
+// --- Вспомогательные функции ---
 
 function showMessage(text, isError = false) {
     messageEl.textContent = text;
