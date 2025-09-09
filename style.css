@@ -17,30 +17,33 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   background: var(--background-color);
   background-image: radial-gradient(circle at 10% 20%, rgba(0, 170, 255, 0.2), transparent 30%),
                     radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.2), transparent 30%);
   color: var(--text-color);
-  overflow: hidden;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Убираем overflow: hidden для включения скроллинга */
 }
 
 .control-card {
-  position: relative; /* Это исправит позиционирование дочерних кнопок */
+  position: relative;
   background: var(--card-color);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
-  padding: 40px;
+  padding: clamp(16px, 4vw, 40px); /* адаптивный padding: уменьшение на мобильных */
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   text-align: center;
   animation: fadeIn 1s ease-out;
-  width: 90%;
-  max-width: 500px; /* Увеличиваем максимальную ширину для размещения погодной панели */
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto; /* центрирование карточки на маленьких экранах */
+  transition: padding 0.2s ease, transform 0.2s ease;
 }
 
 h1 {
@@ -442,5 +445,166 @@ h1 {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}/* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+
+/* Планшеты и маленькие ноутбуки */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 10px;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  
+  .control-card {
+    padding: 15px;
+    margin: 10px auto;
+    border-radius: 15px;
+    max-width: 100%;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .weather-panel {
+    margin: 15px 0;
+    padding: 15px;
+  }
+  
+  .weather-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .weather-item {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .weather-value {
+    font-size: 1.1rem;
+  }
+}
+
+/* Мобильные телефоны */
+@media screen and (max-width: 480px) {
+  body {
+    padding: 5px;
+    padding-top: 10px;
+  }
+  
+  .control-card {
+    padding: 10px;
+    margin: 5px auto;
+    border-radius: 10px;
+    width: calc(100% - 10px);
+  }
+  
+  h1 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  
+  .weather-panel {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .weather-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .weather-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .weather-item {
+    padding: 8px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+  
+  .weather-value {
+    font-size: 1rem;
+    margin-top: 2px;
+  }
+  
+  .weather-icon {
+    font-size: 1rem;
+    margin-right: 5px;
+  }
+  
+  .control-buttons {
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .control-btn {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+  
+  .logs-section {
+    margin-top: 15px;
+  }
+  
+  .logs-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .log-entry {
+    padding: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    border-radius: 6px;
+  }
+  
+  .log-time {
+    font-size: 0.7rem;
+  }
+  
+  .connection-status {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media screen and (max-width: 320px) {
+  .control-card {
+    padding: 8px;
+    margin: 3px auto;
+  }
+  
+  h1 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  
+  .weather-panel {
+    padding: 8px;
+    margin: 8px 0;
+  }
+  
+  .weather-item {
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+  
+  .weather-value {
+    font-size: 0.9rem;
+  }
+  
+  .control-btn {
+    padding: 10px 15px;
+    font-size: 0.8rem;
   }
 }
